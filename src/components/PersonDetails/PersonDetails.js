@@ -3,35 +3,41 @@ import React, { Component } from 'react';
 import './PersonDetails.css';
 import SwapiService from '../../services/swapi-service';
 import Spinner from '../Spinner';
+import ErrorButton from '../ErrorButton';
 
 export default class PersonDetails extends Component {
   swapiService = new SwapiService();
   state = {
     person: null,
-    loading: true
+    loading: false
   };
 
   componentDidMount() {
+    console.log('componentDidMount()');
     this.updatePerson();
-    console.log(this.state);
   }
 
   componentDidUpdate = prevProps => {
+    console.log('componentDidUpdate()');
     if (this.props.personId !== prevProps.personId) {
       this.updatePerson();
+      console.log('Новые, componentDidUpdate()')
+    } else {
+      console.log('Старые, componentDidUpdate()');
     }
   };
 
-  updatePerson() {
+  componentWillUpdate() {
+    console.log('componentWillUpdate()');
+  }
+  async updatePerson() {
     const { personId } = this.props;
     if (!personId) return;
-    (async () => {
-      const person = await this.swapiService.getPerson(personId);
+      const person = await this.swapiService.getPerson(personId); 
       // this.props.updateDetailsLoading();
       this.setState({
-        person
+        person,
       });
-    })();
   }
 
   render() {
@@ -71,6 +77,7 @@ export default class PersonDetails extends Component {
               <span>{eyeColor}</span>
             </li>
           </ul>
+          <ErrorButton />
         </div>
       </div>
     );

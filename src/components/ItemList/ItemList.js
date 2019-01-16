@@ -4,16 +4,19 @@ import './ItemList.css';
 import SwapiService from '../../services/swapi-service';
 import Spinner from '../Spinner';
 
-export default class ItemList extends Component {
-  swapiService = new SwapiService();
+export default class ItemList extends Component {  
+  // swapiService = new SwapiService();
+
   state = {
-    peopleList: null
+    itemList: null
   };
+
   componentDidMount() {
+    const { getData } = this.props;
     (async () => {
-      const peopleList = await this.swapiService.getAllPeople();
+      const itemList = await getData();
       this.setState({
-        peopleList
+        itemList
       });
     })();
     // this.swapiService.getAllPeople().then(peopleList => {
@@ -37,12 +40,12 @@ export default class ItemList extends Component {
     });
   }
   render() {
-    const { peopleList } = this.state;
+    const { itemList } = this.state;
 
-    if (!peopleList) {
+    if (!itemList) {
       return <Spinner />;
     }
-    const items = this.renderItems(peopleList);
+    const items = this.renderItems(itemList);
     return <ul className="item-list list-group">{items}</ul>;
   }
 }
