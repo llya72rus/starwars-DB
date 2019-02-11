@@ -47,6 +47,7 @@
 .lds-double-ring {
   position: relative;
 }
+
 .lds-double-ring div {
   position: absolute;
   width: 160px;

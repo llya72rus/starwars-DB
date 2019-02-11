@@ -1,51 +1,38 @@
-import React, { Component } from 'react';
+import React from 'react';
+import SwapiService from '../../services/swapi-service';
+import { WithData } from '../HOC-helpers';
+import PropTypes from 'prop-types';
 
 import './ItemList.css';
-import SwapiService from '../../services/swapi-service';
-import Spinner from '../Spinner';
 
-export default class ItemList extends Component {  
-  // swapiService = new SwapiService();
+const ItemList = (props) => {
+  const { data, onItemSelected, children: renderLabel } = props;
+  const items = data.map((item) => {
+    const { id } = item;
+    const label = renderLabel(item);
+    return (
+      <li
+        className="list-group-item"
+        key={id}
+        onClick={() => onItemSelected(id)}
+      >
+        {label}
+      </li>
+    );
+  });
+  return <ul className="item-list list-group">{items}</ul>;
+};
 
-  state = {
-    itemList: null
-  };
+ItemList.defaultProps = {
+  onItemSelected: () => {},
+};
 
-  componentDidMount() {
-    const { getData } = this.props;
-    (async () => {
-      const itemList = await getData();
-      this.setState({
-        itemList
-      });
-    })();
-    // this.swapiService.getAllPeople().then(peopleList => {
-    //   console.log(peopleList);
-    //   this.setState({
-    //     peopleList
-    //   });
-    // });
-  }
-  renderItems(arr) {
-    return arr.map(({ id, name }) => {
-      return (
-        <li
-          className="list-group-item"
-          key={id}
-          onClick={() => this.props.onItemSelected(id)}
-        >
-          {name}
-        </li>
-      );
-    });
-  }
-  render() {
-    const { itemList } = this.state;
+ItemList.propTypes = {
+  onItemSelected: PropTypes.func,
+  data: PropTypes.arrayOf(PropTypes.object).isRequired,
+  children: PropTypes.func.isRequired,
+};
 
-    if (!itemList) {
-      return <Spinner />;
-    }
-    const items = this.renderItems(itemList);
-    return <ul className="item-list list-group">{items}</ul>;
-  }
-}
+const { getAllPeople } = new SwapiService();
+
+export default WithData(ItemList, getAllPeople);
